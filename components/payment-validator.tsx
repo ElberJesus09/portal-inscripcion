@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Building2, CheckCircle2, CreditCard, LoaderCircle, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Building2, Check, CheckCircle2, CreditCard, LoaderCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 
@@ -93,9 +93,9 @@ export function PaymentValidator() {
 
   if (result?.ok) {
     return (
-      <Card className="validation-card success-card">
-        <CardContent className="flex min-h-[520px] flex-col items-center justify-center px-7 text-center sm:px-12">
-          <div className="grid h-20 w-20 place-items-center rounded-full bg-emerald-100 text-emerald-700">
+      <Card className="success-panel">
+        <CardContent className="flex min-h-[490px] flex-col items-center justify-center px-7 text-center sm:px-12">
+          <div className="success-icon grid h-20 w-20 place-items-center rounded-full bg-emerald-100 text-emerald-700">
             <CheckCircle2 className="h-10 w-10" aria-hidden="true" />
           </div>
           <p className="mt-7 font-heading text-xs font-extrabold uppercase tracking-[0.18em] text-emerald-700">Pago validado</p>
@@ -103,7 +103,7 @@ export function PaymentValidator() {
           <p className="mt-4 max-w-md text-base leading-7 text-slate-600">
             El pago de <strong>{result.studentName}</strong> fue validado para <strong>{result.concept}</strong> y quedó registrado como utilizado.
           </p>
-          <Button className="mt-8 h-12 w-full max-w-sm rounded-xl bg-sky-700 px-6 text-base font-bold hover:bg-sky-800" onClick={() => window.location.assign(`/continue?token=${encodeURIComponent(result.accessToken)}`)}>
+          <Button className="primary-action mt-8 h-12 w-full max-w-sm text-base" onClick={() => window.location.assign(`/continue?token=${encodeURIComponent(result.accessToken)}`)}>
             Continuar al formulario <ArrowRight aria-hidden="true" />
           </Button>
           <p className="mt-4 text-xs text-slate-500">No cierres esta página hasta abrir el formulario de inscripción.</p>
@@ -113,30 +113,21 @@ export function PaymentValidator() {
   }
 
   return (
-    <Card className="validation-card">
-      <CardHeader className="border-b border-slate-100 px-6 pb-5 sm:px-8">
-        <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-sky-100 text-sky-700">
-            <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-          </div>
-          <div>
-            <CardTitle className="font-heading text-xl font-extrabold text-slate-950">Validar pago</CardTitle>
-            <CardDescription className="mt-1">Completa todos los datos de tu comprobante.</CardDescription>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="px-6 pt-6 sm:px-8 sm:pt-7">
-        <form onSubmit={submit} className="space-y-6">
+    <Card className="validation-form">
+      <CardContent className="p-0">
+        <form onSubmit={submit} className="space-y-7">
           <fieldset>
             <legend className="field-label">Medio de pago</legend>
-            <div className="mt-2 grid grid-cols-2 gap-3">
+            <div className="payment-method-grid mt-2 grid grid-cols-2 gap-3">
               <button type="button" className={`payment-option ${source === 'BANCO_NACION' ? 'payment-option-active' : ''}`} onClick={() => { setSource('BANCO_NACION'); setResult(null); }} aria-pressed={source === 'BANCO_NACION'}>
-                <Building2 aria-hidden="true" />
-                <span>Banco de la Nación</span>
+                <span className="payment-option-icon"><Building2 aria-hidden="true" /></span>
+                <span className="min-w-0 text-left"><strong>Banco de la Nación</strong><small>Voucher y agencia</small></span>
+                <span className="payment-option-check"><Check aria-hidden="true" /></span>
               </button>
               <button type="button" className={`payment-option ${source === 'PAGALO_PE' ? 'payment-option-active' : ''}`} onClick={() => { setSource('PAGALO_PE'); setResult(null); }} aria-pressed={source === 'PAGALO_PE'}>
-                <CreditCard aria-hidden="true" />
-                <span>Págalo.pe</span>
+                <span className="payment-option-icon"><CreditCard aria-hidden="true" /></span>
+                <span className="min-w-0 text-left"><strong>Págalo.pe</strong><small>Secuencia digital</small></span>
+                <span className="payment-option-check"><Check aria-hidden="true" /></span>
               </button>
             </div>
           </fieldset>
@@ -181,11 +172,10 @@ export function PaymentValidator() {
             </Alert>
           )}
 
-          <Button type="submit" disabled={loading} className="h-12 w-full rounded-xl bg-sky-700 text-base font-bold hover:bg-sky-800">
+          <Button type="submit" disabled={loading} className="primary-action h-12 w-full text-base">
             {loading ? <><LoaderCircle className="animate-spin" aria-hidden="true" /> Validando…</> : <>Validar pago <ArrowRight aria-hidden="true" /></>}
           </Button>
         </form>
-        <p className="mt-5 text-center text-xs leading-5 text-slate-500">La información se utiliza únicamente para verificar tu pago.</p>
       </CardContent>
     </Card>
   );
