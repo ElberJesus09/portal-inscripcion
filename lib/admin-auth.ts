@@ -37,9 +37,10 @@ export async function isAdmin() {
 }
 
 export function passwordMatches(value: string) {
-  const expected = process.env.ADMIN_PASSWORD || '';
-  if (!value || !expected) return false;
-  const a = Buffer.from(value);
+  const entered = value.trim();
+  const expected = (process.env.ADMIN_PASSWORD || '').trim();
+  if (!entered || !expected) return false;
+  const a = Buffer.from(entered);
   const b = Buffer.from(expected);
   return a.length === b.length && timingSafeEqual(a, b);
 }
