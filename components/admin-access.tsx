@@ -17,12 +17,20 @@ export function AdminAccess() {
     event.preventDefault();
     setLoading(true);
     setError('');
-    const response = await fetch('/api/admin/login', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }),
-    });
-    setLoading(false);
-    if (response.ok) window.location.reload();
-    else setError('Contraseña incorrecta.');
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (response.ok) window.location.reload();
+      else setError(result.error || 'No se pudo iniciar sesión.');
+    } catch {
+      setError('No se pudo conectar con el servidor. Inténtalo nuevamente.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
